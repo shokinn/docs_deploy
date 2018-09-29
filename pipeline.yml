@@ -1,0 +1,61 @@
+---
+platform: linux
+
+resource_types:
+- name: concourse-pipeline
+  type: docker-image
+  source:
+    repository: concourse/concourse-pipeline-resource
+
+resources:
+- name: concourse-pipeline
+  type: concourse-pipeline
+  source:
+    target: ((concourse_url))
+    teams:
+    - name: ((concourse_team))
+      username: ((concourse_username))
+      password: ((concourse_password))
+
+- name: ci-config
+  type: git
+  source:
+    branch: ((git_branch))
+    uri: ((git_pipeline_url))
+    private_key: ((git_key))
+    git_crypt_key: ((git_crypt_key))
+
+#- name: src
+#  type: git
+#  source:
+#    uri: ((git_url))
+#    branch: ((git_branch))
+#    private_key: ((git_key))
+
+#- name: gh-pages
+#  type: git
+#  source:
+#    uri: ((git_url))
+#    branch: gh-pages
+#    private_key: ((git_pages_key))
+
+#############################
+# JOBS
+#############################
+jobs:
+- name: update-pipeline
+  plan:
+  - get: ci-config
+    trigger: true
+  - put: concourse-pipeline
+    params:
+      pipelines:
+      - name: ((concourse_pipeline))
+        team: ((concourse_team))
+        config_file: ci-config/pipeline.yml
+        vars_files:
+        - ci-config/credentials.yml
+
+#############################
+### Deployment
+#############################

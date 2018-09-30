@@ -96,8 +96,6 @@ jobs:
           cd ./src-workspace
           mkdocs build -c
 
-
-
 #############################
 ### Deployment
 #############################
@@ -108,6 +106,7 @@ jobs:
     params:
       submodules: all
       submodule_recursive: true
+  - get: gh-pages
   - task: build_docs
     config:
       platform: linux
@@ -125,9 +124,12 @@ jobs:
         - |
           cd ./src
           mkdocs build -c
+          cd ../gh-pages
+          cp ../src/site/*
+          git commit -m "Update docs."
       outputs:
       - name: docs
-        path: ./site/
+        path: ./
   - put: gh-pages
     params:
       repository: docs

@@ -61,6 +61,37 @@ jobs:
         - ci-config/credentials.yml
 
 #############################
+### Build-test
+#############################
+- name: build-workspace
+  plan:
+  - get: src
+    trigger: true
+    params:
+      repository: workspace
+      submodules: all
+      submodule_recursive: true
+  - task: build_workspace_docs
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: nightwire/docker-mkdocs
+          tag: latest
+      inputs:
+        - name: src
+      run:
+        path: sh
+        args:
+        - -exc
+        - |
+          cd ./src
+          mkdocs build -c
+
+
+
+#############################
 ### Deployment
 #############################
 - name: build

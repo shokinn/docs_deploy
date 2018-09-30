@@ -117,6 +117,7 @@ jobs:
           tag: latest
       inputs:
         - name: src
+        - name: gh-pages
       run:
         path: sh
         args:
@@ -125,7 +126,7 @@ jobs:
           cd ./src
           mkdocs build -c
           cd ../gh-pages
-          cp ../src/site/*
+          cp -r ../src/site/* ./
           git commit -m "Update docs."
       outputs:
       - name: docs

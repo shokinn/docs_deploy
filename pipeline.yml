@@ -46,6 +46,13 @@ resources:
     branch: ((git_pages_branch))
     private_key: ((git_pages_key))
 
+- name: gh-pages-staging
+  type: git
+  source:
+    uri: ((git_pages_staging_url))
+    branch: ((git_pages_branch))
+    private_key: ((git_pages_staging_key))
+
 #############################
 # JOBS
 #############################
@@ -88,6 +95,8 @@ jobs:
           tag: latest
       inputs:
         - name: src-docs-workspace
+      outputs:
+        - name: gh-pages-staging
       run:
         path: sh
         args:
@@ -95,6 +104,18 @@ jobs:
         - |
           cd ./src-docs-workspace
           mkdocs build -c
+          cd ../gh-pages-staging
+          mkdir -p /root/.ssh/
+          ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+          git clone --single-branch -b ((git_pages_branch)) ((git_pages_staging_https_url)) .
+          rsync -av ../src-docs-workspace/site/ .
+          git config user.email "((git_mail))"
+          git config user.name "((git_user))"
+          git add .
+          git commit -m "Update docs."
+  - put: gh-pages-staging
+    params:
+      repository: gh-pages-staging
 
 #############################
 ### Deployment
@@ -123,8 +144,6 @@ jobs:
         args:
         - -exc
         - |
-          ls -la
-          pwd
           cd ./src-docs
           mkdocs build -c
           cd ../gh-pages

@@ -32,6 +32,13 @@ resources:
     branch: ((git_branch))
     private_key: ((git_key))
 
+- name: src-workspace
+  type: git
+  source:
+    uri: ((git_url))
+    branch: workspace
+    private_key: ((git_key))
+
 - name: gh-pages
   type: git
   source:
@@ -65,7 +72,7 @@ jobs:
 #############################
 - name: build-workspace
   plan:
-  - get: src
+  - get: src-workspace
     trigger: true
     params:
       repository: workspace

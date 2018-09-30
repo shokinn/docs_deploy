@@ -76,7 +76,8 @@ jobs:
       image_resource:
         type: docker-image
         source:
-          repository: hub.docker.com/nightwire/docker-mkdocs
+          repository: nightwire/docker-mkdocs
+          tag: latest
       inputs:
         - name: src
       run:

@@ -42,7 +42,7 @@ resources:
 - name: gh-pages
   type: git
   source:
-    uri: ((git_pages_url))
+    uri: ((git_url))
     branch: ((git_pages_branch))
     private_key: ((git_pages_key))
 

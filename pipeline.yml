@@ -87,13 +87,13 @@ jobs:
           repository: nightwire/docker-mkdocs
           tag: latest
       inputs:
-        - name: src
+        - name: src-workspace
       run:
         path: sh
         args:
         - -exc
         - |
-          cd ./src
+          cd ./src-workspace
           mkdocs build -c
 
 
